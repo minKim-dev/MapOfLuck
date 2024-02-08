@@ -13,14 +13,22 @@
 import SwiftUI
 
 struct ContentView: View {
+    var locationName: String = ""
+    var rate: Int = 0 // rate arrangement is 0 to 5
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        // NavigationStack 사용해보기
+        NavigationView {
+            NavigationLink(destination: ListView(), label: <#T##() -> View#>) {
+                Text("complete")
+            }
         }
-        .padding()
+    }
+}
+    
+struct ListView: View {
+    var body: some View {
+            Text("This is ListView")
     }
 }
 
