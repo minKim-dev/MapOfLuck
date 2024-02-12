@@ -13,13 +13,33 @@
 import SwiftUI
 
 struct ContentView: View {
-    var locationName: String = ""
-    var rate: Int = 0 // rate arrangement is 0 to 5
+    @State var locationName: String = ""
+    @State var rate: Int = 0 // rate arrangement is 0 to 5
+    @State private var star = 0
+    @State private var isEditing = false
     
     var body: some View {
         // NavigationStack 사용해보기
-        NavigationView {
-            NavigationLink(destination: ListView(), label: <#T##() -> View#>) {
+        NavigationStack {
+            TextField(
+                "locationName",
+                text: $locationName
+            )
+            
+            VStack {
+                Slider(
+                    value: $star,
+                    in: 0...5,
+                    onEditingChanged: { editing in
+                        isEditing = editing
+                    
+                    }
+                )
+                Text("5 to \(star)")
+                    .foregroundColor(isEditing ? .red : .blue)
+            }
+            
+            NavigationLink(destination: ListView()) {
                 Text("complete")
             }
         }
@@ -29,6 +49,26 @@ struct ContentView: View {
 struct ListView: View {
     var body: some View {
             Text("This is ListView")
+        
+        NavigationStack {
+            List() { // List is a root view
+                NavigationLink(destination: DetailView()) {
+                    Text("location_1")
+                }
+                NavigationLink(destination: DetailView()) {
+                    Text("location_2")
+                }
+                NavigationLink(destination: DetailView()) {
+                    Text("location_3")
+                }
+            }
+        }
+    }
+}
+
+struct DetailView: View {
+    var body: some View {
+        Text("This is DetailView")
     }
 }
 
