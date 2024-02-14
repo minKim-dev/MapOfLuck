@@ -26,18 +26,6 @@ struct ContentView: View {
                 text: $locationName
             )
             
-            VStack {
-                Slider(
-                    value: $star,
-                    in: 0...5,
-                    onEditingChanged: { editing in
-                        isEditing = editing
-                    
-                    }
-                )
-                Text("5 to \(star)")
-                    .foregroundColor(isEditing ? .red : .blue)
-            }
             
             NavigationLink(destination: ListView()) {
                 Text("complete")
