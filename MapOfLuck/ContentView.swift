@@ -28,8 +28,11 @@ import SwiftUI
 struct ContentView: View {
     @State var locationName: String = ""
     @State var rate: String = "" // rate arrangement is 0 to 5
-    @State private var star = 0
     @State private var isEditing = false
+    var info: [String : Int] = [:] // locationName : rate
+    @State private var errorNumber: Int
+    @State var color: String = "black"
+    
     
     var body: some View {
         // NavigationStack 사용해보기
@@ -38,19 +41,34 @@ struct ContentView: View {
                 "locationName",
                 text: $locationName
             )
+            .foregroundColor(.color)
             
            // rate를 표시할 수 있는 TextField 추가함.
             TextField(
                 "0 to 5",
                 text: $rate
             )
-            
+        
             NavigationLink(destination: ListView()) {
                 Text("complete")
             }
-            // TextField의 조건을 만족하지 않았을 때 실행될 함수 넣는 곳
             
+            // the place for errorDetect() func
+            // 텍스트 필드 색깔을 받아서 변경하는 것으로
         }
+    }
+    
+    // Error handling
+    private func errorDetect() {
+        // first case: locationName and rate are empty.
+        // Second case: the type typed at rate TextField is wrong; not number type because String is stored on rate TextField.
+        
+        // if statement -> return value according to case
+        if locationName == "\0" && rate == "\0" {
+            errorNumber = 1
+        }
+        // switch statement -> error handling based on return value.
+        
     }
 }
     
@@ -60,7 +78,7 @@ struct ListView: View {
         
         NavigationStack {
             // ForEach 이용해서 List 표현하는 방식으로 바꿨음.
-            ForEach(0..<10) { num in
+            ForEach(0..<10, id: \.self) { num in
                 List() {
                     NavigationLink(destination: DetailView()) {
                         Text("location_\(num)")
