@@ -26,19 +26,26 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var locationName: String = ""
-    @State private var locationNames: [String] = ["Example1", "Example2"] // for testing
-    @State private var rate: Double = 0.0 // rate arrangement is 0 to 5
-    @State private var rates: [Double] = [3.0, 4.0] // for testing
-    @State private var isEditing = false
-    var info: [String : String] = [:] // locationName : rate
-    // @State private var errorNumber: Int
+    struct MapItem: Identifiable {
+        var id = UUID()
+        var name: String
+        var rate: Double
+    }
+    
+    @State var MapListData: [MapItem] = [
+        MapItem(name: "Example1", rate: 3.0),
+        MapItem(name: "Example2", rate: 5.0)
+    ]
+    
+    // 변수 이름 수정 및 필요없는 변수 삭제
+    @State private var newLocationName: String = ""
+    @State private var newLocationRate: Double = 0.0 // rate arrangement is 0 to 5
     @State private var color: Color  = .black
     
     
     
     var body: some View {
-         
+        
         // NavigationStack 사용해보기
         NavigationStack {
             
@@ -50,19 +57,25 @@ struct ContentView: View {
             VStack {
                 TextField(
                     "locationName",
-                    text: $locationName
+                    text: $newLocationName
                 )
                 .foregroundColor(color)
                 .padding()
-               // rate를 표시할 수 있는 TextField 추가함.
-                Text("Slider Value: \(Int(rate))")
                 
-                Slider(value: $rate, in: 0...5, step: 1)
+                // rate를 표시할 수 있는 TextField 추가함 -> Slider로 변경(2024.02.22)
+                Text("Slider Value: \(Int(newLocationRate))")
+                
+                Slider(value: $newLocationRate, in: 0...5, step: 1)
                     .padding()
                     .accentColor(.blue)
-            
-                NavigationLink(destination: ListView(rate: $rate, locationNames: $locationNames)) {
-                    Text("complete")
+                
+                Button("Save") {
+                    addLocation()
+                }
+                .padding()
+                
+                NavigationLink(destination: ListView(MapListData: $MapListData)) {
+                    Text("Add location")
                 }
                 
                 // the place for errorDetect() func
@@ -70,6 +83,17 @@ struct ContentView: View {
             }
             .padding(.bottom, 100)
         }
+    }
+    
+    private func addLocation() {
+        let newLocation = MapItem(name: newLocationName, rate: newLocationRate)
+        MapListData.append(newLocation)
+        
+        // modal that alarms user saving the location is complete
+        
+        // clear TextField
+        newLocationName = ""
+        newLocationRate = 0.0
     }
     
     /*
@@ -89,8 +113,7 @@ struct ContentView: View {
 }
     
 struct ListView: View {
-    @Binding var rate: Double
-    @Binding var locationNames: [String]
+    @Binding var MapListData: [ContentView.MapItem]
     
     var body: some View {
             Text("This is ListView")
@@ -98,9 +121,10 @@ struct ListView: View {
         NavigationStack {
             // ForEach 이용해서 List 표현하는 방식으로 바꿨음. -> 이러면 뷰가 2개 생겨서 상단과 하단에 똑같은 뷰가 생겨버림.
             // ForEach를 없애고 배열을 사용해서 리스트를 구현함.
-            List(locationNames, id: \.self) { location in
+            List(MapListData) { item in
                 NavigationLink(destination: DetailView()) {
-                    Text("location_\(location)")
+                    Text("\(item.name)")
+                    Text("rate: \(Int(item.rate))") // 이모지로 변경 예정
                 }
             }
                 
